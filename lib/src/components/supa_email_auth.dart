@@ -62,7 +62,10 @@ class SupaEmailAuth extends StatefulWidget {
   /// Callback for the user to complete a signUp.
   ///
   /// If email confirmation is turned on, the user is
-  final void Function(AuthResponse response) onSignUpComplete;
+  final void Function(AuthResponse response)? onSignUpComplete;
+
+  /// Callback when the user updated their data.
+  final void Function(UserResponse response)? onUserUpdateComplete;
 
   /// Callback for sending the password reset email
   final void Function()? onPasswordResetEmailSent;
@@ -84,7 +87,8 @@ class SupaEmailAuth extends StatefulWidget {
     Key? key,
     this.redirectTo,
     required this.onSignInComplete,
-    required this.onSignUpComplete,
+    this.onSignUpComplete,
+    this.onUserUpdateComplete,
     this.onPasswordResetEmailSent,
     this.onError,
     this.metadataFields,
@@ -209,13 +213,14 @@ class _SupaEmailAuthState extends State<SupaEmailAuth> {
                     );
                     widget.onSignInComplete.call(response);
                   } else {
-                    final response = await supabase.auth.signUp(
-                      email: _emailController.text.trim(),
-                      password: _passwordController.text.trim(),
-                      emailRedirectTo: widget.redirectTo,
-                      data: _resolveData(),
+                    final response = await supabase.auth.updateUser(
+                      UserAttributes(
+                        email: _emailController.text.trim(),
+                        password: _passwordController.text.trim(),
+                        data: _resolveData(),
+                      ),
                     );
-                    widget.onSignUpComplete.call(response);
+                    widget.onUserUpdateComplete?.call(response);
                   }
                 } on AuthException catch (error) {
                   if (widget.onError == null && context.mounted) {
