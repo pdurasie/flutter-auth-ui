@@ -34,7 +34,7 @@ extension on OAuthProvider {
         OAuthProvider.apple => Colors.black,
         OAuthProvider.azure => Colors.blueAccent,
         OAuthProvider.bitbucket => Colors.blue,
-        OAuthProvider.discord => Colors.purple,
+        OAuthProvider.discord => const Color(0xFF7289DA),
         OAuthProvider.facebook => const Color(0xFF3b5998),
         OAuthProvider.figma => const Color.fromRGBO(241, 77, 27, 1),
         OAuthProvider.github => Colors.black,
@@ -330,7 +330,7 @@ class _SupaSocialsAuthState extends State<SupaSocialsAuth> {
               }
             }
 
-            await supabase.auth.signInWithOAuth(
+            await supabase.auth.linkIdentity(
               socialProvider,
               redirectTo: widget.redirectUrl,
               scopes: widget.scopes?[socialProvider],
